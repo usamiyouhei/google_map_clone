@@ -1,52 +1,89 @@
-import './index.css';
-import { Link } from 'react-router-dom';
+import { useState } from "react";
+import "./index.css";
+import { Link } from "react-router-dom";
+import { authRepository } from "../../modules/auth/auth.repository";
 
 export default function Signup() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassWord] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const signup = async () => {
+    setIsLoading(true);
+    try {
+      const { user, token } = await authRepository.signup(
+        name,
+        email,
+        password,
+      );
+      console.log(user, token);
+    } catch (error) {
+      console.error(error);
+      window.alert("ユーザー登録に失敗しました");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <div className='auth-page'>
-      <div className='auth-card'>
-        <div className='auth-header'>
-          <div className='auth-logo'>M</div>
-          <h1 className='auth-title'>アカウント作成</h1>
-          <p className='auth-subtitle'>MapExplorer に参加する</p>
+    <div className="auth-page">
+      <div className="auth-card">
+        <div className="auth-header">
+          <div className="auth-logo">M</div>
+          <h1 className="auth-title">アカウント作成</h1>
+          <p className="auth-subtitle">MapExplorer に参加する</p>
         </div>
 
-        <div className='auth-form'>
-          <div className='form-field'>
-            <label htmlFor='username'>ユーザー名</label>
+        <div className="auth-form">
+          <div className="form-field">
+            <label htmlFor="username">ユーザー名</label>
             <input
-              id='username'
-              type='text'
-              placeholder='山田太郎'
+              id="username"
+              type="text"
+              placeholder="山田太郎"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
             />
           </div>
 
-          <div className='form-field'>
-            <label htmlFor='email'>メールアドレス</label>
+          <div className="form-field">
+            <label htmlFor="email">メールアドレス</label>
             <input
-              id='email'
-              type='email'
-              placeholder='example@example.com'
+              id="email"
+              type="email"
+              placeholder="example@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
-          <div className='form-field'>
-            <label htmlFor='password'>パスワード</label>
+          <div className="form-field">
+            <label htmlFor="password">パスワード</label>
             <input
-              id='password'
-              type='password'
-              placeholder='8文字以上'
+              id="password"
+              type="password"
+              placeholder="8文字以上"
+              value={password}
+              onChange={(e) => setPassWord(e.target.value)}
             />
           </div>
 
-          <button className='auth-submit-btn' type='button'>
+          <button
+            className="auth-submit-btn"
+            type="button"
+            onClick={signup}
+            disabled={
+              !name || !email || !password || isLoading || password.length < 8
+            }
+          >
             アカウント作成
           </button>
         </div>
 
-        <div className='auth-footer'>
+        <div className="auth-footer">
           既にアカウントをお持ちの方は
-          <Link to=''>ログイン</Link>
+          <Link to="">ログイン</Link>
         </div>
       </div>
     </div>
