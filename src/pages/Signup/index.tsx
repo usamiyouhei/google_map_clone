@@ -83,7 +83,7 @@ export default function Signup() {
 
         <div className="auth-footer">
           既にアカウントをお持ちの方は
-          <Link to="">ログイン</Link>
+          <Link to="/signin">ログイン</Link>
         </div>
       </div>
     </div>
