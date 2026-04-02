@@ -13,7 +13,7 @@ export default function MapView() {
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="http://www.openstreetmap.org/copyright">openstreetmap</a> contributors'
+          attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
       </MapContainer>
       {/* マップはreact-leafletを使用するため、ライブラリ削除後は表示されません */}
