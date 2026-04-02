@@ -1,7 +1,7 @@
 import api from "./api";
 
 export interface NominatimResult {
-  placedId: number;
+  placeId: number;
   displayName: string;
   lat: string;
   lon: string;
