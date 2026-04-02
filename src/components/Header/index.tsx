@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import "./index.css";
 import { searchPlace, type NominatimResult } from "../../lib/nominatim";
 
@@ -7,6 +7,7 @@ export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [query, setQuery] = useState("");
+  const searchTimeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const searchAddress = async (value: string) => {
     if (!value.trim()) {
@@ -31,6 +32,8 @@ export default function Header() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setQuery(value);
+    if (searchTimeRef.current) clearTimeout(searchTimeRef.current);
+    searchTimeRef.current = setTimeout(() => searchAddress(value), 500);
     searchAddress(value);
   };
 
