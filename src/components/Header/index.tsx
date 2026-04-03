@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./index.css";
 import { searchPlace, type NominatimResult } from "../../lib/nominatim";
 
@@ -9,6 +9,21 @@ export default function Header() {
   const [query, setQuery] = useState("");
   const searchTimeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // ページのどこかクリックされたらcloseResult発動
+    document.addEventListener("mousedown", closeResult);
+    return () => {
+      // コンポーネントが破棄されたらremoveしている
+      document.removeEventListener("mousedown", closeResult);
+    };
+  }, []);
+
+  const closeResult = (e: MouseEvent) => {
+    if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+      setIsOpen(false);
+    }
+  };
 
   const searchAddress = async (value: string) => {
     console.log("search");
@@ -52,7 +67,7 @@ export default function Header() {
         <span className="header-logo-text">MapExplorer</span>
       </div>
       <div className="header-search">
-        <div className="address-search">
+        <div className="address-search" ref={wrapperRef}>
           <div className="address-search-input-wrapper">
             <svg
               className="address-search-icon"
