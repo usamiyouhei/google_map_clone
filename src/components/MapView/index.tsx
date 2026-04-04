@@ -1,7 +1,21 @@
 import "./index.css";
 import LocateButton from "../LocateButton";
 import RoutePanel from "../RoutePanel";
-import { MapContainer, TileLayer } from "react-leaflet";
+import { MapContainer, TileLayer, useMap } from "react-leaflet";
+import { useAtomValue } from "jotai";
+import { mapStateAtom } from "../../modules/maps/map.state";
+import { useEffect } from "react";
+
+function MapController() {
+  const map = useMap();
+  const { center, zoom } = useAtomValue(mapStateAtom);
+
+  useEffect(() => {
+    map.setView(center, zoom);
+  }, [center, zoom]);
+
+  return null;
+}
 
 export default function MapView() {
   return (
@@ -15,6 +29,7 @@ export default function MapView() {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
+        <MapController />
       </MapContainer>
       {/* マップはreact-leafletを使用するため、ライブラリ削除後は表示されません */}
       <LocateButton />

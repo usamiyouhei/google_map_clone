@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import "./index.css";
 import { searchPlace, type NominatimResult } from "../../lib/nominatim";
+import { useSetAtom } from "jotai";
+import { mapStateAtom } from "../../modules/maps/map.state";
 
 export default function Header() {
   const [results, setResults] = useState<NominatimResult[]>([]);
@@ -9,6 +11,7 @@ export default function Header() {
   const [query, setQuery] = useState("");
   const searchTimeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const setMapState = useSetAtom(mapStateAtom);
 
   useEffect(() => {
     // ページのどこかクリックされたらcloseResult発動
@@ -49,6 +52,17 @@ export default function Header() {
 
   const handleClear = () => {
     setQuery("");
+    setResults([]);
+    setIsOpen(false);
+  };
+
+  const jumpToAddress = (result: NominatimResult) => {
+    setMapState((prev) => ({
+      ...prev,
+      center: [parseFloat(result.lat), parseFloat(result.lon)],
+      zoom: 15,
+    }));
+    setQuery(result.displayName);
     setResults([]);
     setIsOpen(false);
   };
@@ -107,8 +121,12 @@ export default function Header() {
           {/* 検索結果ドロップダウンのUI（コメントインで確認） */}
           {isOpen && results.length > 0 && (
             <ul className="address-search-dropdown">
-              {results.map((results) => (
-                <li className="address-search-item" key={results.placeId}>
+              {results.map((result) => (
+                <li
+                  className="address-search-item"
+                  key={result.placeId}
+                  onClick={() => jumpToAddress(result)}
+                >
                   <svg
                     className="address-search-item-icon"
                     viewBox="0 0 24 24"
@@ -120,7 +138,7 @@ export default function Header() {
                     />
                   </svg>
                   <span className="address-search-item-text">
-                    {results.displayName}
+                    {result.displayName}
                   </span>
                 </li>
               ))}
