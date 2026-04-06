@@ -1,5 +1,7 @@
+import { useAtom } from "jotai";
 import { CATEGORY_LABELS } from "../../modules/spots/spot.entity";
 import "./index.css";
+import { filterStateAtom } from "../../modules/spots/filter.state";
 
 const categories = [
   { value: "", label: "全て" },
@@ -10,11 +12,19 @@ const categories = [
 ];
 
 export default function CategoryFilter() {
+  const [filterState, setFilterState] = useAtom(filterStateAtom);
+
   return (
     <div className="category-filter">
       <div className="category-filter-list">
         {categories.map((category) => (
-          <button key={category.value} className="category-filter-chip">
+          <button
+            key={category.value}
+            className={`category-filter-chip ${filterState.category === category.value ? "active" : ""}`}
+            onClick={() =>
+              setFilterState((prev) => ({ ...prev, category: category.value }))
+            }
+          >
             {category.label}
           </button>
         ))}
