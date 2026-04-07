@@ -16,6 +16,7 @@ export default function Sidebar() {
   const fetchSpots = async () => {
     const spots = await spotRepository.getSpots({
       category: filterState.category,
+      search: filterState.searchQuery,
     });
     setSpots(spots);
   };
