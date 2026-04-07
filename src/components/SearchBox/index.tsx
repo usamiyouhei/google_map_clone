@@ -6,13 +6,13 @@ import { filterStateAtom } from "../../modules/spots/filter.state";
 export default function SearchBox() {
   const [query, setQuery] = useState("");
   const setFilterState = useSetAtom(filterStateAtom);
-  const searchTimeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setQuery(value);
-    if (searchTimeRef.current) clearTimeout(searchTimeRef.current);
-    searchTimeRef.current = setTimeout(() => {
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+    searchTimerRef.current = setTimeout(() => {
       setFilterState((prev) => ({ ...prev, searchQuery: value }));
     }, 500);
   };
