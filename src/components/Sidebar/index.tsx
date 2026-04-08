@@ -7,11 +7,14 @@ import { useEffect } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { spotsAtom } from "../../modules/spots/spots.state";
 import { filterStateAtom } from "../../modules/spots/filter.state";
+import { favoriteRepository } from "../../modules/favorites/favorite.repository";
+import { favoritesAtom } from "../../modules/favorites/favorite.state";
 // import FavoriteList from '../FavoriteList'; // お気に入りタブUIを確認する場合はコメントインして使用
 
 export default function Sidebar() {
   const setSpots = useSetAtom(spotsAtom);
   const filterState = useAtomValue(filterStateAtom);
+  const setFavorites = useSetAtom(favoritesAtom);
 
   const fetchSpots = async () => {
     const spots = await spotRepository.getSpots({
@@ -21,9 +24,18 @@ export default function Sidebar() {
     setSpots(spots);
   };
 
+  const fetchFavorites = async () => {
+    const spots = await favoriteRepository.getFavorites();
+    setFavorites(spots);
+  };
+
   useEffect(() => {
     fetchSpots();
   }, [filterState]);
+
+  useEffect(() => {
+    fetchFavorites();
+  }, []);
 
   return (
     <div className="sidebar">
