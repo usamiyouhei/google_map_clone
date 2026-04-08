@@ -29,5 +29,30 @@ export function useFavoriteToggle(spot: Spot) {
       setIsLoading(false);
     }
   };
+  // const toggleFavorite = async (e?: MouseEvent) => {
+  //   e?.stopPropagation();
+  //   setIsLoading(true);
+
+  //   const currentlyFavorite = favorites.some(
+  //     (favorite) => favorite.id === spot.id,
+  //   );
+
+  //   try {
+  //     if (currentlyFavorite) {
+  //       await favoriteRepository.removeFavorite(spot.id);
+  //       setFavorites((prev) =>
+  //         prev.filter((favorite) => favorite.id !== spot.id),
+  //       );
+  //     } else {
+  //       await favoriteRepository.addFavorite(spot.id);
+  //       setFavorites((prev) => [...prev, { ...spot, isFavorite: true }]);
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //     window.alert("お気に入りの更新に失敗しました");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
   return { isLoading, isFavorite, toggleFavorite };
 }
