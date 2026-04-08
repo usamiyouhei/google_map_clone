@@ -3,18 +3,21 @@ import SearchBox from "../SearchBox";
 import CategoryFilter from "../CategoryFilter";
 import SpotList from "../SpotList";
 import { spotRepository } from "../../modules/spots/spot.repository";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { spotsAtom } from "../../modules/spots/spots.state";
 import { filterStateAtom } from "../../modules/spots/filter.state";
 import { favoriteRepository } from "../../modules/favorites/favorite.repository";
 import { favoritesAtom } from "../../modules/favorites/favorite.state";
+import FavoriteList from "../FavoriteList";
 // import FavoriteList from '../FavoriteList'; // お気に入りタブUIを確認する場合はコメントインして使用
+type Tab = "spots" | "favorites";
 
 export default function Sidebar() {
   const setSpots = useSetAtom(spotsAtom);
   const filterState = useAtomValue(filterStateAtom);
   const setFavorites = useSetAtom(favoritesAtom);
+  const [activeTab, setActiveTab] = useState<Tab>("spots");
 
   const fetchSpots = async () => {
     const spots = await spotRepository.getSpots({
@@ -42,28 +45,40 @@ export default function Sidebar() {
       <div className="sidebar-tabs">
         {/* スポット一覧タブ（アクティブ状態）
             お気に入りタブに切り替えたい場合は、下のコメントのように active クラスを移動する */}
-        <button className="sidebar-tab active">スポット一覧</button>
-        <button className="sidebar-tab">お気に入り</button>
+        <button
+          className={`sidebar-tab ${activeTab === "spots" ? "active" : ""}`}
+          onClick={() => setActiveTab("spots")}
+        >
+          スポット一覧
+        </button>
+        <button
+          className={`sidebar-tab ${activeTab === "favorites" ? "active" : ""}`}
+          onClick={() => setActiveTab("favorites")}
+        >
+          お気に入り
+        </button>
       </div>
 
       {/* スポット一覧タブのUI（デフォルト表示） */}
-      <>
-        <div className="sidebar-search">
-          <SearchBox />
-        </div>
-        <div className="sidebar-filter">
-          <CategoryFilter />
-        </div>
-        <div className="sidebar-content">
-          <SpotList />
-        </div>
-      </>
+      {activeTab === "spots" && (
+        <>
+          <div className="sidebar-search">
+            <SearchBox />
+          </div>
+          <div className="sidebar-filter">
+            <CategoryFilter />
+          </div>
+          <div className="sidebar-content">
+            <SpotList />
+          </div>
+        </>
+      )}
 
-      {/* お気に入りタブのUI（コメントインで確認）
-      <div className='sidebar-content'>
-        <FavoriteList />
-      </div>
-      */}
+      {activeTab === "favorites" && (
+        <div className="sidebar-content">
+          <FavoriteList />
+        </div>
+      )}
     </div>
   );
 }
