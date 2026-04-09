@@ -5,6 +5,8 @@ import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import { useAtomValue } from "jotai";
 import { mapStateAtom } from "../../modules/maps/map.state";
 import { useEffect } from "react";
+import { spotsAtom } from "../../modules/spots/spots.state";
+import SpotMarker from "../SpotMarker";
 
 function MapController() {
   const map = useMap();
@@ -18,6 +20,7 @@ function MapController() {
 }
 
 export default function MapView() {
+  const spots = useAtomValue(spotsAtom);
   return (
     <div className="map-wrapper">
       <MapContainer
@@ -30,6 +33,9 @@ export default function MapView() {
           attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
         <MapController />
+        {spots.map((spot) => (
+          <SpotMarker key={spot.id} spot={spot} />
+        ))}
       </MapContainer>
       {/* マップはreact-leafletを使用するため、ライブラリ削除後は表示されません */}
       <LocateButton />
