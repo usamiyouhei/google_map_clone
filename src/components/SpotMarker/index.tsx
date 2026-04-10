@@ -1,9 +1,10 @@
-import { Marker } from "react-leaflet";
+import { Marker, Popup } from "react-leaflet";
 import type { Spot } from "../../modules/spots/spot.entity";
 import "./index.css";
 import { useAtomValue } from "jotai";
 import { favoritesAtom } from "../../modules/favorites/favorite.state";
 import L from "leaflet";
+import SpotPopup from "../SpotPopup";
 const CATEGORY_COLORS: { [key: string]: string } = {
   cafe: "#c5221f",
   restaurant: "#b06000",
@@ -42,6 +43,10 @@ export default function SpotMarker({ spot }: Props) {
       });
 
   return (
-    <Marker position={[spot.latitude, spot.longitude]} icon={icon}></Marker>
+    <Marker position={[spot.latitude, spot.longitude]} icon={icon}>
+      <Popup>
+        <SpotPopup spot={spot} />
+      </Popup>
+    </Marker>
   );
 }
