@@ -1,11 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./index.css";
 import { useSetAtom } from "jotai";
 import { locationAtom } from "../../modules/locations/location.state";
+import { mapStateAtom } from "../../modules/maps/map.state";
 
 export default function LocateButton() {
   const [isLoading, setIsLoading] = useState(false);
   const setLocation = useSetAtom(locationAtom);
+  const setMapState = useSetAtom(mapStateAtom);
+
+  const handleSuccess = (pos: GeolocationPosition) => {
+    const position: [number, number] = [
+      pos.coords.latitude,
+      pos.coords.longitude,
+    ];
+    setLocation(position);
+    setMapState((prev) => ({ ...prev, center: position, zoom: 15 }));
+    setIsLoading(false);
+  };
 
   const handleLocate = () => {
     if (!navigator.geolocation) {
@@ -14,21 +26,21 @@ export default function LocateButton() {
     }
 
     setIsLoading(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const position: [number, number] = [
-          pos.coords.latitude,
-          pos.coords.longitude,
-        ];
-        setLocation(position);
-        setIsLoading(false);
-      },
-      () => {
-        window.alert("位置情報の取得に失敗しました");
-        setIsLoading(false);
-      },
-    );
+    navigator.geolocation.getCurrentPosition(handleSuccess, () => {
+      window.alert("位置情報の取得に失敗しました");
+      setIsLoading(false);
+    });
   };
+
+  useEffect(() => {
+    if (!navigator.geolocation || !navigator.permissions) return;
+    navigator.permissions.query({ name: "geolocation" }).then((status) => {
+      if (status.state !== "granted") return;
+      setIsLoading(true);
+      navigator.geolocation.getCurrentPosition(handleSuccess);
+    });
+  }, []);
+
   return (
     <div className="locate-button-wrapper">
       {/* ローディング中の場合: className='locate-button locate-button--loading'、disabled 属性を追加して確認 */}
