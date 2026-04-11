@@ -7,6 +7,7 @@ import { mapStateAtom } from "../../modules/maps/map.state";
 import { useEffect } from "react";
 import { spotsAtom } from "../../modules/spots/spots.state";
 import SpotMarker from "../SpotMarker";
+import CurrentLocationMarker from "../CurrentLocationMarker";
 
 function MapController() {
   const map = useMap();
@@ -36,6 +37,7 @@ export default function MapView() {
         {spots.map((spot) => (
           <SpotMarker key={spot.id} spot={spot} />
         ))}
+        <CurrentLocationMarker />
       </MapContainer>
       {/* マップはreact-leafletを使用するため、ライブラリ削除後は表示されません */}
       <LocateButton />
