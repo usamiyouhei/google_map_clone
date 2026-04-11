@@ -1,10 +1,12 @@
 import { Marker, Popup } from "react-leaflet";
 import type { Spot } from "../../modules/spots/spot.entity";
 import "./index.css";
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { favoritesAtom } from "../../modules/favorites/favorite.state";
 import L from "leaflet";
 import SpotPopup from "../SpotPopup";
+import { useEffect, useRef } from "react";
+import { mapStateAtom } from "../../modules/maps/map.state";
 const CATEGORY_COLORS: { [key: string]: string } = {
   cafe: "#c5221f",
   restaurant: "#b06000",
@@ -25,6 +27,15 @@ export default function SpotMarker({ spot }: Props) {
   const favoriteSpots = useAtomValue(favoritesAtom);
   const isFavorite = favoriteSpots.some((favorite) => favorite.id === spot.id);
   const color = CATEGORY_COLORS[spot.category];
+  const markerRef = useRef<L.Marker>(null);
+  const { selectedSpotId } = useAtomValue(mapStateAtom);
+  const setMapState = useSetAtom(mapStateAtom);
+
+  useEffect(() => {
+    if (selectedSpotId === spot.id && markerRef.current) {
+      markerRef.current.openPopup();
+    }
+  }, [selectedSpotId]);
 
   const icon = isFavorite
     ? L.divIcon({
@@ -43,7 +54,16 @@ export default function SpotMarker({ spot }: Props) {
       });
 
   return (
-    <Marker position={[spot.latitude, spot.longitude]} icon={icon}>
+    <Marker
+      position={[spot.latitude, spot.longitude]}
+      icon={icon}
+      ref={markerRef}
+      eventHandlers={{
+        popupclose: () => {
+          setMapState((prev) => ({ ...prev, selectedSpotId: null }));
+        },
+      }}
+    >
       <Popup>
         <SpotPopup spot={spot} />
       </Popup>
