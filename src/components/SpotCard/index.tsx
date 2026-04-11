@@ -1,14 +1,26 @@
+import { useSetAtom } from "jotai";
 import { useFavoriteToggle } from "../../modules/favorites/useFavoriteToggle";
 import { CATEGORY_LABELS, type Spot } from "../../modules/spots/spot.entity";
 import "./index.css";
+import { mapStateAtom } from "../../modules/maps/map.state";
 
 interface Props {
   spot: Spot;
 }
 export default function SpotCard({ spot }: Props) {
   const { isFavorite, toggleFavorite, isLoading } = useFavoriteToggle(spot);
+  const setMapState = useSetAtom(mapStateAtom);
+
+  const handleClick = () => {
+    setMapState((prev) => ({
+      ...prev,
+      center: [spot.latitude, spot.longitude],
+      zoom: 17,
+      selectedSpotId: spot.id,
+    }));
+  };
   return (
-    <div className="spot-card">
+    <div className="spot-card" onClick={handleClick}>
       <div className="spot-card-body">
         <div className="spot-card-header">
           <span className="spot-card-name">{spot.name}</span>
