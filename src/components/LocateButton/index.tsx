@@ -3,11 +3,13 @@ import "./index.css";
 import { useSetAtom } from "jotai";
 import { locationAtom } from "../../modules/locations/location.state";
 import { mapStateAtom } from "../../modules/maps/map.state";
+import { routeAtom } from "../../modules/routes/route.state";
 
 export default function LocateButton() {
   const [isLoading, setIsLoading] = useState(false);
   const setLocation = useSetAtom(locationAtom);
   const setMapState = useSetAtom(mapStateAtom);
+  const setRoute = useSetAtom(routeAtom);
 
   const handleSuccess = (pos: GeolocationPosition) => {
     const position: [number, number] = [
@@ -16,6 +18,7 @@ export default function LocateButton() {
     ];
     setLocation(position);
     setMapState((prev) => ({ ...prev, center: position, zoom: 15 }));
+    setRoute((prev) => ({ ...prev, origin: position }));
     setIsLoading(false);
   };
 
