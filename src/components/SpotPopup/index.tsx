@@ -1,6 +1,8 @@
+import { useAtom } from "jotai";
 import { useFavoriteToggle } from "../../modules/favorites/useFavoriteToggle";
 import { CATEGORY_LABELS, type Spot } from "../../modules/spots/spot.entity";
 import "./index.css";
+import { routeAtom } from "../../modules/routes/route.state";
 
 interface Props {
   spot: Spot;
@@ -8,6 +10,14 @@ interface Props {
 
 export default function SpotPopup({ spot }: Props) {
   const { isFavorite, toggleFavorite, isLoading } = useFavoriteToggle(spot);
+  const [route, setRoute] = useAtom(routeAtom);
+
+  const handleRoute = () => {
+    setRoute((prev) => ({
+      ...prev,
+      destination: [spot.latitude, spot.longitude],
+    }));
+  };
   return (
     <div className="spot-popup">
       <div className="spot-popup-header">
@@ -37,7 +47,13 @@ export default function SpotPopup({ spot }: Props) {
           {isFavorite ? "お気に入り済み" : "お気に入り"}
         </button>
         {/* 現在地未取得（disabled）の場合: disabled 属性を追加して確認 */}
-        <button className="spot-popup-route">ここへのルート</button>
+        <button
+          className="spot-popup-route"
+          onClick={handleRoute}
+          disabled={!route.origin}
+        >
+          ここへのルート
+        </button>
       </div>
     </div>
   );
