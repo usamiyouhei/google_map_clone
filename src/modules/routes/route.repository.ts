@@ -1,9 +1,9 @@
 import type { LatLng, RouteData } from "./route.state";
-import api from "../../lib/api";
+import axios from "axios";
 
 export const routeRepository = {
   async getRoute(origin: LatLng, destination: LatLng): Promise<RouteData> {
-    const result = await api.get(
+    const result = await axios.get(
       `http://router.project-osrm.org/route/v1/driving/${origin[1]},${origin[0]};${destination[1]},${destination[0]}?overview=full&geometries=geojson`,
     );
     const data = result.data;
