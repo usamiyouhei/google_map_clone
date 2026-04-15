@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import "./index.css";
 import { searchPlace, type NominatimResult } from "../../lib/nominatim";
-import { useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { mapStateAtom } from "../../modules/maps/map.state";
+import { currentUserAtom } from "../../modules/auth/current-user.state";
 
 export default function Header() {
   const [results, setResults] = useState<NominatimResult[]>([]);
@@ -12,6 +13,7 @@ export default function Header() {
   const searchTimeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const setMapState = useSetAtom(mapStateAtom);
+  const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
 
   useEffect(() => {
     // ページのどこかクリックされたらcloseResult発動
@@ -72,6 +74,11 @@ export default function Header() {
     setQuery(value);
     if (searchTimeRef.current) clearTimeout(searchTimeRef.current);
     searchTimeRef.current = setTimeout(() => searchAddress(value), 500);
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(undefined);
+    localStorage.removeItem("token");
   };
 
   return (
@@ -146,8 +153,10 @@ export default function Header() {
           )}
         </div>
       </div>
-      <span className="header-username">山田太郎</span>
-      <button className="header-logout">ログアウト</button>
+      <span className="header-username">{currentUser!.name}</span>
+      <button className="header-logout" onClick={handleLogout}>
+        ログアウト
+      </button>
     </header>
   );
 }
